@@ -1,12 +1,13 @@
 package com.hci.apps.bpro;
 
 import android.app.usage.UsageStats;
+import android.support.annotation.NonNull;
 
 /**
  * Created by abdo on 28/11/17.
  */
 
-public class ListItemModel {
+public class ListItemModel implements Comparable< ListItemModel>{
     private String packageName;
     private UsageStats stats;
 
@@ -29,5 +30,15 @@ public class ListItemModel {
 
     public void setStats(UsageStats stats) {
         this.stats = stats;
+    }
+
+    @Override
+    public int compareTo(@NonNull ListItemModel o) {
+        if(stats.getTotalTimeInForeground() < o.getStats().getTotalTimeInForeground())
+            return 1;
+            else if (stats.getTotalTimeInForeground() > o.getStats().getTotalTimeInForeground())
+                return -1;
+                else
+                    return 0;
     }
 }

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +26,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         for (Map.Entry<String,UsageStats> item:data.entrySet()) {
             this.data.add(new ListItemModel(item.getKey(),item.getValue()));
         }
+        Collections.sort(this.data);
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

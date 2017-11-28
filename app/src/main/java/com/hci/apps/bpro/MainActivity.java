@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -61,15 +62,23 @@ public class MainActivity extends AppCompatActivity
             calendar.add(Calendar.HOUR_OF_DAY, -1 * calendar.get(Calendar.HOUR_OF_DAY));
             calendar.add(Calendar.MINUTE, -1 * calendar.get(Calendar.MINUTE));
             calendar.add(Calendar.SECOND, -1 * calendar.get(Calendar.SECOND));
+            //start time
             long start = calendar.getTimeInMillis();
+            //end time
             long end = System.currentTimeMillis();
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
             StringBuilder title = new StringBuilder();
             title.append("The start period is ");
-            title.append(calendar);
+            title.append(format1.format(calendar.getTime()));
             title.append(" till ");
-            title.append(new Date(end));
-            tvTitle.setText(title.toString());
+            title.append(format1.format( new Date(end)));
+            title.append(" number of apps to display is ");
+
+            //get the application status starting from start time to end time
             Map<String, UsageStats> stats = usageStatsManager.queryAndAggregateUsageStats(start, end);
+            title.append(stats.size());
+            tvTitle.setText(title.toString());
             adapter = new RecyclerAdapter(stats);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
