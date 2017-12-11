@@ -17,7 +17,7 @@ import java.util.Map;
  */
 
 public class LoggerManager {
-
+    private static final long THRESHOLD = 1000*60*60;
     private static final LoggerManager ourInstance = new LoggerManager();
 
     static LoggerManager getInstance() {
@@ -56,6 +56,17 @@ public class LoggerManager {
         }
         Collections.sort(returnList);
         return returnList;
+    }
+    public List<ListItemModel> queryThresholdAsList(Context ctxt){
+        List<ListItemModel> all = queryDayAsList(ctxt);
+        List<ListItemModel> exceededThreshold = new ArrayList<>();
+        for (ListItemModel model:all) {
+            if(model.getStats().getTotalTimeInForeground() >THRESHOLD)
+                exceededThreshold.add(model);
+            else
+                break;
+        }
+        return exceededThreshold;
     }
 
 }

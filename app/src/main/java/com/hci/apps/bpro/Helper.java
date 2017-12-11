@@ -1,8 +1,13 @@
 package com.hci.apps.bpro;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 
 import java.util.concurrent.TimeUnit;
 
@@ -11,6 +16,9 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class Helper {
+
+    public static final int DRAW_OVER_OTHER_APP_PERMISSION = 123;
+
     public static String getApplicationName (String packageName, Context ctxt) throws PackageManager.NameNotFoundException {
         ApplicationInfo ai = ctxt.getPackageManager().getApplicationInfo(packageName,0);
         return  ctxt.getPackageManager().getApplicationLabel(ai)== null?"unknown":ctxt.getPackageManager().getApplicationLabel(ai).toString();
@@ -21,5 +29,19 @@ public class Helper {
                 TimeUnit.MILLISECONDS.toSeconds(millis) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
         );
+    }
+    public static void askForSystemOverlayPermission(Activity ctxt) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(ctxt)) {
+
+            //If the draw over permission is not available to open the settings screen
+            //to grant the permission.
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + ctxt.getPackageName()));
+            ctxt.startActivityForResult(intent, DRAW_OVER_OTHER_APP_PERMISSION);
+        }
+    }
+    public static int getPixels (Context ctxt,int dp){
+        final float scale = ctxt.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
     }
 }

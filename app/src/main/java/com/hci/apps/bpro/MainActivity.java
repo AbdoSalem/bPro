@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
+        Helper.askForSystemOverlayPermission(this);
 
 
         boolean alarmUp = sharedPref.getBoolean(SERVICE_STARTED_KEY,false);
@@ -96,6 +96,12 @@ public class MainActivity extends AppCompatActivity
         }else{
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     private void onServiceButtonClicked() {
@@ -110,6 +116,19 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Start Tracking", Toast.LENGTH_LONG).show();
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
             writeServiceState(true);
+            // To prevent starting the service if the required permission is NOT granted.
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    //Permission is not available. Display error text.
+                    Toast.makeText(this, "Draw over other app permission not available. Can't start the application without the permission.", Toast.LENGTH_LONG).show();
+                    Helper.askForSystemOverlayPermission(this);
+                    finish();
+                }
+            }else {
+                //super.onActivityResult(Helper.R, resultCode, data);
+                startService(new Intent(MainActivity.this, FloatingService.class));
+            }
+
 
         }else {
             Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
@@ -122,6 +141,7 @@ public class MainActivity extends AppCompatActivity
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
             pendingIntent =null;
             writeServiceState(false);
+            stopService(new Intent(MainActivity.this, FloatingService.class));
         }
     }
 
@@ -191,5 +211,6 @@ public class MainActivity extends AppCompatActivity
         editor.putBoolean(SERVICE_STARTED_KEY, isActive);
         editor.commit();
     }
+
 
 }
