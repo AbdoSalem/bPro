@@ -2,15 +2,11 @@ package com.hci.apps.bpro;
 
 import android.app.AlarmManager;
 import android.app.AppOpsManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
@@ -27,13 +23,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
@@ -41,12 +35,16 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SERVICE_STARTED_KEY = "SERVICE_STARTED_KEY";
+    public static final String CHEAT_POINTS_KEY = "CHEAT_POINTS_KEY";
+    public static final String CHEAT_POINTS_DATE_KEY = "CHEAT_POINTS_DATE_KEY";
     TextView tvTitle;
+    TextView tvText;
     RecyclerView recyclerView;
     RecyclerAdapter adapter;
     FloatingActionButton serviceButton;
     private PendingIntent pendingIntent;
     private SharedPreferences sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +52,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        tvTitle = (TextView) findViewById(R.id.tv_title);
+        tvTitle = (TextView) findViewById(R.id.tv_points);
+        tvText = (TextView) findViewById(R.id.tv_text2);
         recyclerView = (RecyclerView) findViewById(R.id.list);
         serviceButton = (FloatingActionButton) findViewById(R.id.btn_service);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -62,6 +61,15 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        tvText.setPaintFlags(tvText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        tvText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                startActivity(new Intent(MainActivity.this,MapsActivity.class));
+                return false;
+            }
+        });
+
         sharedPref =  getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -96,6 +104,8 @@ public class MainActivity extends AppCompatActivity
         }else{
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
         }
+        int points = sharedPref.getInt(CHEAT_POINTS_KEY,0);
+        tvTitle.setText(String.valueOf(points));
     }
 
     @Override
@@ -183,18 +193,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_run) {
+           startActivity(new Intent(this,MapsActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

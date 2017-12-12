@@ -9,6 +9,7 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -16,10 +17,12 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +35,7 @@ public class MyAlarmService extends Service {
         Log.d(TAG,"Started the service now");
         List<ListItemModel>data = LoggerManager.getInstance().queryThresholdAsList(this);
         if( FloatingService.service!= null) {
-            FloatingService.service.setState(data.isEmpty());
+            FloatingService.service.setState(data);
         }
         if(data.size()>0) {
             String appName="unknown";
@@ -48,6 +51,23 @@ public class MyAlarmService extends Service {
                 }
             }
             showNotification(apps,times);
+        }
+        SharedPreferences sharedPref=getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String datastr = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE).getString(MainActivity.CHEAT_POINTS_DATE_KEY,Helper.sdf.format(new Date()));
+        try {
+            Date date1 = Helper.sdf.parse(datastr);
+            Date now = new Date();
+            if (date1.getDay()!= now.getDay() && date1.before(now))
+            {
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putInt(MainActivity.CHEAT_POINTS_KEY, 0);
+                editor.putString(MainActivity.CHEAT_POINTS_DATE_KEY,Helper.sdf.format(new Date()));
+                editor.commit();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
     @Override

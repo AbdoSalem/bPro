@@ -9,11 +9,12 @@
     android:visibility="visible">
 
 
-    <android.support.design.widget.FloatingActionButton
+    <com.andremion.counterfab.CounterFab
         android:id="@+id/fabHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_done_green_24dp"
+        android:src="@drawable/smiley_sourire"
+        android:backgroundTint="#fcc921"
         app:fabSize="normal" />
 
 

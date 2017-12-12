@@ -12,14 +12,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_points"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/fab_margin"
+        android:textSize="70sp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Points"
+        android:id="@+id/tv_text"
+        android:layout_below="@+id/tv_points"
+        android:layout_centerHorizontal="true"
+
+
+        android:textSize="20sp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click me, so you can run and buy more time on apps"
+        android:id="@+id/tv_text2"
+        android:gravity="center"
+        android:layout_below="@+id/tv_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:textSize="17sp"
+
         />
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_below="@+id/tv_title"
+        android:layout_below="@+id/tv_text2"
         android:id="@+id/list"
         android:layout_height="match_parent">
 

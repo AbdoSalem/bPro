@@ -16,15 +16,22 @@ import android.view.WindowManager;
 
 import com.andremion.counterfab.CounterFab;
 
+import java.util.List;
+
 public class FloatingService extends Service {
 
     private static final String TAG = FloatingService.class.getSimpleName();
     private WindowManager mWindowManager;
     private View mOverlayView;
-    FloatingActionButton counterFab;
+    CounterFab counterFab;
 
     public static FloatingService service;
     public FloatingService() {
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
     }
 
     @Override
@@ -57,10 +64,11 @@ public class FloatingService extends Service {
         mWindowManager.addView(mOverlayView, params);
 
 
-        counterFab = (FloatingActionButton) mOverlayView.findViewById(R.id.fabHead);
+        counterFab = (CounterFab) mOverlayView.findViewById(R.id.fabHead);
 
 
-        setState(LoggerManager.getInstance().queryThresholdAsList(this).isEmpty());
+        setState(LoggerManager.getInstance().queryThresholdAsList(this));
+
         counterFab.setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
@@ -132,14 +140,16 @@ public class FloatingService extends Service {
             mWindowManager.removeView(mOverlayView);
     }
 
-    public void setState(boolean isOk){
-        if(!isOk){
-            counterFab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255,0,0)));
-
-            counterFab.setImageDrawable(getDrawable(R.drawable.ic_clear_white_48dp));
+    public void setState(List<ListItemModel> list){
+        if(!list.isEmpty()){
+            //counterFab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255,0,0)));
+            counterFab.setCount(list.size());
+            counterFab.setImageDrawable(getDrawable(R.drawable.face));
         }else{
-            counterFab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(0,255,0)));
-            counterFab.setImageDrawable(getDrawable(R.drawable.ic_done_white_48dp));
+            //counterFab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(0,255,0)));
+            counterFab.setImageDrawable(getDrawable(R.drawable.smiley_sourire));
+            counterFab.setCount(0);
         }
+
     }
 }

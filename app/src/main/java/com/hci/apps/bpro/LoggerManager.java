@@ -60,8 +60,10 @@ public class LoggerManager {
     public List<ListItemModel> queryThresholdAsList(Context ctxt){
         List<ListItemModel> all = queryDayAsList(ctxt);
         List<ListItemModel> exceededThreshold = new ArrayList<>();
+        int points = ctxt.getSharedPreferences(
+                ctxt.getString(R.string.preference_file_key), Context.MODE_PRIVATE).getInt(MainActivity.CHEAT_POINTS_KEY,0);
         for (ListItemModel model:all) {
-            if(model.getStats().getTotalTimeInForeground() >THRESHOLD)
+            if(model.getStats().getTotalTimeInForeground() > (THRESHOLD + (points*1000*60*15)))
                 exceededThreshold.add(model);
             else
                 break;
