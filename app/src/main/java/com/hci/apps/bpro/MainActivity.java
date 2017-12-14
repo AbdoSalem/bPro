@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SERVICE_STARTED_KEY = "SERVICE_STARTED_KEY";
     public static final String CHEAT_POINTS_KEY = "CHEAT_POINTS_KEY";
+    public static final String FIRST_INSTALL_DATE_KEY = "FIRST_INSTALL_DATE_KEY";
+
     public static final String CHEAT_POINTS_DATE_KEY = "CHEAT_POINTS_DATE_KEY";
     TextView tvTitle;
     TextView tvText;
@@ -72,6 +75,13 @@ public class MainActivity extends AppCompatActivity
 
         sharedPref =  getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String date = sharedPref.getString(FIRST_INSTALL_DATE_KEY,null);
+
+        if(date == null){
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(FIRST_INSTALL_DATE_KEY, Helper.sdf.format(new Date()));
+            editor.commit();
+        }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
