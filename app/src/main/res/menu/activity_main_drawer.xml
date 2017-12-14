@@ -9,5 +9,11 @@
             android:icon="@drawable/ic_directions_run_white_24dp"
             android:title="Run with map" />
     </group>
+    <group  android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_report"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:title="Report" />
+    </group>
 
 </menu>

@@ -41,7 +41,7 @@ import java.util.Date;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback  {
 
-    private static final long MIN_TIME = 60*60*1000;
+    private static final long MIN_TIME = 30*1000;
     private static final long MIN_DISTANCE = 500;
     private static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Represents a geographical location.
      */
-    private Location mCurrentLocation;
+    private Location mCurrentLocation = null;
     /**
      * Time when the location was updated represented as a String.
      */
@@ -177,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Sets the fastest rate for active location updates. This interval is exact, and your
         // application will never receive updates faster than this value.
-        mLocationRequest.setFastestInterval(MIN_TIME+(1000*60));
+        mLocationRequest.setFastestInterval(MIN_TIME+(1000));
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -194,20 +194,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-        mMap.animateCamera(cameraUpdate);
-        Log.d(TAG,"location changed to "+latLng +" with speed " +location.getSpeed());
-        Toast.makeText(this,"location changed to "+latLng +" with speed " +location.getSpeed(),Toast.LENGTH_LONG).show();
-        if(location.getSpeed()<40f) {
-            Log.d(TAG,"user is running");
+       if(mCurrentLocation == null || ( mCurrentLocation .getLatitude() != location.getLatitude() && mCurrentLocation.getLongitude()!= location.getLongitude())) {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mCurrentLocation = location;
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+            mMap.animateCamera(cameraUpdate);
+            Log.d(TAG, "location changed to " + latLng + " with speed " + location.getSpeed());
+            //Toast.makeText(this, "location changed to " + latLng + " with speed " + location.getSpeed(), Toast.LENGTH_LONG).show();
+            if (location.getSpeed() < 40f) {
+                Log.d(TAG, "user is running");
 
-            mMap.addMarker(new MarkerOptions().position(latLng));
-            if (previousLocation != null) {
+                mMap.addMarker(new MarkerOptions().position(latLng));
+                if (previousLocation != null) {
 
 
-                distanceTraveledSoFar += location.distanceTo(previousLocation);
-                Log.d(TAG,"user is running and previous location was registered distance so far "+ distanceTraveledSoFar);
+                    distanceTraveledSoFar += location.distanceTo(previousLocation);
+                    Log.d(TAG, "user is running and previous location was registered distance so far " + distanceTraveledSoFar);
+                }
             }
         }
        // locationManager.removeUpdates(this);
@@ -232,6 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
+        mRequestingLocationUpdates= true;
     }
 
     /**
@@ -264,8 +268,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-
-                mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 onLocationChanged(locationResult.getLastLocation());
             }

@@ -17,7 +17,7 @@ import java.util.Map;
  */
 
 public class LoggerManager {
-    private static final long THRESHOLD = 1000*60*60;
+    private static final long THRESHOLD = 1000*60*60*2;
     private static final LoggerManager ourInstance = new LoggerManager();
 
     static LoggerManager getInstance() {

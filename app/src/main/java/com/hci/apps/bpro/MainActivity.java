@@ -104,8 +104,7 @@ public class MainActivity extends AppCompatActivity
         }else{
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
         }
-        int points = sharedPref.getInt(CHEAT_POINTS_KEY,0);
-        tvTitle.setText(String.valueOf(points));
+
     }
 
     @Override
@@ -156,6 +155,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        updatePoints();
+    }
+
+    private void updatePoints() {
+        int points = sharedPref.getInt(CHEAT_POINTS_KEY,0);
+        tvTitle.setText(String.valueOf(points));
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -195,6 +205,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_run) {
            startActivity(new Intent(this,MapsActivity.class));
+        }else if (id== R.id.nav_report){
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
