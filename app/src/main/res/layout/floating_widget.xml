@@ -14,8 +14,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/smiley_sourire"
-        android:backgroundTint="#fcc921"
+        app:backgroundTint="#fcc921"
         app:fabSize="normal" />
-
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fabHead"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/smiley_sourire"-->
+        <!--android:backgroundTint="#fcc921"-->
+        <!--app:fabSize="normal" />-->
 
 </RelativeLayout>

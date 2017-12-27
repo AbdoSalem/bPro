@@ -3,7 +3,9 @@ package com.hci.apps.bpro.services;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,7 +27,7 @@ public class FloatingService extends Service {
     private WindowManager mWindowManager;
     private View mOverlayView;
     CounterFab counterFab;
-
+    WindowManager.LayoutParams params;
     public static FloatingService service;
     public FloatingService() {
     }
@@ -44,15 +46,25 @@ public class FloatingService extends Service {
     public void onCreate() {
         super.onCreate();
         setTheme(R.style.AppTheme);
-        mOverlayView = LayoutInflater.from(this).inflate(R.layout.floating_widget, null);
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        mOverlayView = inflater.inflate(R.layout.floating_widget, null);
         service = this;
 
-        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
+             params= new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
+        else
+            params= new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
 
 
         //Specify the view position
