@@ -142,12 +142,18 @@ public class FloatingService extends Service {
     }
 
     private void onWidgetClicked() {
+
+        Intent intent;
         if(counterFab.getCount()>0){
-            Intent intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(MainActivity.SHOW_ONLY_PASS_THRESHOLD,true);
             startActivity(intent);
-        }else
-            startActivity(new Intent(this, MainActivity.class));
+        }else {
+            intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        startActivity(intent);
     }
 
     @Override
