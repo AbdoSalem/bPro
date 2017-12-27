@@ -8,4 +8,5 @@
     <string name="preference_file_key">SHARED_PREF</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_maps2">Map</string>
+    <string name="title_activity_report">ReportActivity</string>
 </resources>

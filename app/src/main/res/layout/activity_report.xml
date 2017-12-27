@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.hci.apps.bpro.activities.MainActivity">
+    tools:context="com.hci.apps.bpro.activities.ReportActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,19 +20,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/content_main" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:baselineAlignBottom="true"
-        android:src="@drawable/ic_play_arrow_white_24dp"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="right|bottom" />
-
+    <include layout="@layout/content_report" />
 
 </android.support.design.widget.CoordinatorLayout>

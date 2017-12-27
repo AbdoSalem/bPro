@@ -1,12 +1,10 @@
-package com.hci.apps.bpro;
+package com.hci.apps.bpro.services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,14 +15,15 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.hci.apps.bpro.Helper;
+import com.hci.apps.bpro.ListItemModel;
+import com.hci.apps.bpro.LoggerManager;
+import com.hci.apps.bpro.R;
+import com.hci.apps.bpro.activities.MainActivity;
+
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class MyAlarmService extends Service {
 

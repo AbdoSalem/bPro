@@ -1,12 +1,9 @@
-package com.hci.apps.bpro;
+package com.hci.apps.bpro.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +12,10 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.andremion.counterfab.CounterFab;
+import com.hci.apps.bpro.ListItemModel;
+import com.hci.apps.bpro.LoggerManager;
+import com.hci.apps.bpro.R;
+import com.hci.apps.bpro.activities.MainActivity;
 
 import java.util.List;
 
@@ -129,7 +130,12 @@ public class FloatingService extends Service {
     }
 
     private void onWidgetClicked() {
-        startActivity(new Intent(this, MainActivity.class));
+        if(counterFab.getCount()>0){
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(MainActivity.SHOW_ONLY_PASS_THRESHOLD,true);
+            startActivity(intent);
+        }else
+            startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override

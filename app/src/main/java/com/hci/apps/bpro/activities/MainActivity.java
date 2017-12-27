@@ -1,4 +1,4 @@
-package com.hci.apps.bpro;
+package com.hci.apps.bpro.activities;
 
 import android.app.AlarmManager;
 import android.app.AppOpsManager;
@@ -28,6 +28,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hci.apps.bpro.services.FloatingService;
+import com.hci.apps.bpro.Helper;
+import com.hci.apps.bpro.LoggerManager;
+import com.hci.apps.bpro.services.MyAlarmService;
+import com.hci.apps.bpro.R;
+import com.hci.apps.bpro.RecyclerAdapter;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -38,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private static final String SERVICE_STARTED_KEY = "SERVICE_STARTED_KEY";
     public static final String CHEAT_POINTS_KEY = "CHEAT_POINTS_KEY";
     public static final String FIRST_INSTALL_DATE_KEY = "FIRST_INSTALL_DATE_KEY";
+    public static final String SHOW_ONLY_PASS_THRESHOLD = "SHOW_ONLY_PASS_THRESHOLD";
 
     public static final String CHEAT_POINTS_DATE_KEY = "CHEAT_POINTS_DATE_KEY";
     TextView tvTitle;
@@ -86,8 +94,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if(checkForPermission(this)) {
-            Map stats = LoggerManager.getInstance().QueryForDay(this);
-            adapter = new RecyclerAdapter(this);
+            adapter = new RecyclerAdapter(this,getIntent().getBooleanExtra(SHOW_ONLY_PASS_THRESHOLD,false));
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -216,7 +223,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_run) {
            startActivity(new Intent(this,MapsActivity.class));
         }else if (id== R.id.nav_report){
-
+            startActivity(new Intent(this,ReportActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

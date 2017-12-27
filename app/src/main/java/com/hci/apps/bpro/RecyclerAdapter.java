@@ -30,8 +30,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     List<ListItemModel> data = new ArrayList<>();
     private Context ctxt;
 
-    public RecyclerAdapter( Context ctxt){
-       this.data = LoggerManager.getInstance().queryDayAsList(ctxt);
+    public RecyclerAdapter( Context ctxt,boolean showPassed){
+        if(showPassed)
+            this.data = LoggerManager.getInstance().queryPassedDayAsList(ctxt);
+        else
+            this.data = LoggerManager.getInstance().queryDayAsList(ctxt);
         this.ctxt = ctxt;
     }
     @Override

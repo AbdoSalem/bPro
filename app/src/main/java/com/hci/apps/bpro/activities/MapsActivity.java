@@ -1,4 +1,4 @@
-package com.hci.apps.bpro;
+package com.hci.apps.bpro.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -14,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -34,9 +32,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.hci.apps.bpro.Helper;
+import com.hci.apps.bpro.R;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback  {
@@ -288,7 +287,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int points = sharedPref.getInt(MainActivity.CHEAT_POINTS_KEY,0);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(MainActivity.CHEAT_POINTS_KEY, (int)((points+ distanceTraveledSoFar)/1000));
-        editor.putString(MainActivity.CHEAT_POINTS_DATE_KEY,Helper.sdf.format(new Date()));
+        editor.putString(MainActivity.CHEAT_POINTS_DATE_KEY, Helper.sdf.format(new Date()));
         editor.commit();
     }
 
