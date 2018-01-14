@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -83,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private String mLastUpdateTime;
     private boolean mRequestingLocationUpdates;
-
+    private boolean started=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,6 +203,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //Toast.makeText(this, "location changed to " + latLng + " with speed " + location.getSpeed(), Toast.LENGTH_LONG).show();
             if (location.getSpeed() < 40f) {
                 Log.d(TAG, "user is running");
+        if(!started) {
+            Toast.makeText(MapsActivity.this, "Enjoy your run :)", Toast.LENGTH_LONG).show();
+            started = true;
+        }
 
                 mMap.addMarker(new MarkerOptions().position(latLng));
                 if (previousLocation != null) {
