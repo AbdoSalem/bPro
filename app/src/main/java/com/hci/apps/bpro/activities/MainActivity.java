@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity
 
             }
 
+//        }
 
 //        }else {
 //            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
