@@ -104,13 +104,14 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
 
         }
-
-        serviceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onServiceButtonClicked();
-            }
-        });
+        onServiceButtonClicked();
+        serviceButton.setVisibility(View.GONE);
+//        serviceButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
 
         Helper.askForSystemOverlayPermission(this);
 
@@ -138,11 +139,8 @@ public class MainActivity extends AppCompatActivity
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    15*60*1000, 15*60*1000, pendingIntent);
+                    15 * 60 * 1000, 15 * 60 * 1000, pendingIntent);
 //            Toast.makeText(this, "Start Tracking", Toast.LENGTH_LONG).show();
-
-//            Toast.makeText(this, "Start Tracking", Toast.LENGTH_LONG).show();
-
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
             writeServiceState(true);
             // To prevent starting the service if the required permission is NOT granted.
@@ -153,7 +151,7 @@ public class MainActivity extends AppCompatActivity
                     Helper.askForSystemOverlayPermission(this);
                     finish();
                 }
-            }else {
+            } else {
                 //super.onActivityResult(Helper.R, resultCode, data);
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
                     startForegroundService(new Intent(this, FloatingService.class));
@@ -162,22 +160,20 @@ public class MainActivity extends AppCompatActivity
                 }
 
             }
-
-        }else {
-            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
-            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
-                    new Intent(this,MyAlarmService.class),
-                    0) );
-            Log.d(TAG,"The intent to cancel is "+ pendingIntent);
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-            serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
-            pendingIntent =null;
-            writeServiceState(false);
-            stopService(new Intent(MainActivity.this, FloatingService.class));
-//        }
-
         }
+//        }else {
+//            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
+//            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
+//                    new Intent(this,MyAlarmService.class),
+//                    0) );
+//            Log.d(TAG,"The intent to cancel is "+ pendingIntent);
+//            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//            alarmManager.cancel(pendingIntent);
+//            serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
+//            pendingIntent =null;
+//            writeServiceState(false);
+//            stopService(new Intent(MainActivity.this, FloatingService.class));
+//        }
 
     }
 
