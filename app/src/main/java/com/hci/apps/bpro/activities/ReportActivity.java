@@ -112,7 +112,7 @@ public class ReportActivity extends AppCompatActivity {
 
         for (Map.Entry<String,MapItemModel> item:map.entrySet()) {
             List<BarEntry> entry= new ArrayList<>();
-            BarEntry oldEntry= new BarEntry(0,item.getValue().getOldStats().getTotalTimeInForeground());
+            BarEntry oldEntry= new BarEntry(0,item.getValue().getOldStats().getTotalTimeInForeground()-item.getValue().getNewStats().getTotalTimeInForeground());
             BarEntry newEntry= new BarEntry(0,item.getValue().getNewStats().getTotalTimeInForeground());
             entry.add(oldEntry);
             entry.add(newEntry);
@@ -162,21 +162,21 @@ public class ReportActivity extends AppCompatActivity {
                 String appName = Helper.getApplicationName(item.getKey(),this);
                 DatabaseReference appRoot =  mobileRoot.child(String.valueOf(appName));
                 DatabaseReference afterRef = appRoot.child("After");
-
                 DatabaseReference startRef =  afterRef.child("Start");
                 startRef.setValue(Helper.sdf.format(new Date(item.getValue().getNewStats().getFirstTimeStamp())));
                 DatabaseReference endRef =  afterRef.child("End");
                 endRef.setValue(Helper.sdf.format(new Date(item.getValue().getNewStats().getLastTimeStamp())));
                 DatabaseReference timeRef =  afterRef.child("time");
                 timeRef.setValue(Helper.getTimeSpent(item.getValue().getNewStats().getTotalTimeInForeground()));
+
                 DatabaseReference beforeRef = appRoot.child("Before");
                 beforeRef.setValue(Helper.getTimeSpent(item.getValue().getOldStats().getTotalTimeInForeground()));
                 startRef =  beforeRef.child("Start");
                 startRef.setValue(Helper.sdf.format(new Date(item.getValue().getOldStats().getFirstTimeStamp())));
                 endRef =  beforeRef.child("End");
-                endRef.setValue(Helper.sdf.format(new Date(item.getValue().getOldStats().getLastTimeStamp())));
+                endRef.setValue(Helper.sdf.format(new Date(item.getValue().getNewStats().getFirstTimeStamp())));
                 timeRef =  beforeRef.child("time");
-                timeRef.setValue(Helper.getTimeSpent(item.getValue().getOldStats().getTotalTimeInForeground()));
+                timeRef.setValue(Helper.getTimeSpent(item.getValue().getOldStats().getTotalTimeInForeground() - item.getValue().getNewStats().getTotalTimeInForeground()));
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }

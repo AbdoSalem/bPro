@@ -120,7 +120,7 @@ public class LoggerManager {
             Mnthb4Install.setTimeInMillis(startlLong);
 
 
-            Map<String, UsageStats> noUsedata = queryForPeriod(ctxt,startlLong,firstInstall.getTime());
+            Map<String, UsageStats> noUsedata = queryForPeriod(ctxt,startlLong,now.getTime());
             Map<String, UsageStats> usedata = queryForPeriod(ctxt,firstInstall.getTime(),now.getTime());
 
             List<ListItemModel> list = new ArrayList<>();
