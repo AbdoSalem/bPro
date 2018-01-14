@@ -1,5 +1,6 @@
 package com.hci.apps.bpro.services;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -34,7 +35,7 @@ public class FloatingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -45,27 +46,31 @@ public class FloatingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         setTheme(R.style.AppTheme);
         LayoutInflater inflater = LayoutInflater.from(this);
 
         mOverlayView = inflater.inflate(R.layout.floating_widget, null);
         service = this;
-
-        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+            startForeground(1,new Notification());
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
              params= new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
-        else
-            params= new WindowManager.LayoutParams(
+
+        }
+        else {
+            params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.TYPE_PHONE,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT);
-
+        }
 
         //Specify the view position
         params.gravity = Gravity.TOP | Gravity.LEFT;        //Initially view will be added to top-left corner
