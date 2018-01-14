@@ -132,8 +132,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onServiceButtonClicked() {
-        boolean alarmUp = sharedPref.getBoolean(SERVICE_STARTED_KEY,false);
-        if(!alarmUp) {
+//        boolean alarmUp = sharedPref.getBoolean(SERVICE_STARTED_KEY,false);
+//        if(!alarmUp) {
             Intent intent = new Intent(getApplicationContext(), MyAlarmService.class);
             pendingIntent = PendingIntent.getService(getApplicationContext(), 125, intent, 0);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
             }
-        }
+//        }
 //        }else {
 //            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
 //            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
