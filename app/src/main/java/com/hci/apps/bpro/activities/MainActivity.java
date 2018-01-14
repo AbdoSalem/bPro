@@ -140,7 +140,13 @@ public class MainActivity extends AppCompatActivity
 
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     15 * 60 * 1000, 15 * 60 * 1000, pendingIntent);
+<<<<<<< HEAD
 //            Toast.makeText(this, "Start Tracking", Toast.LENGTH_LONG).show();
+=======
+
+//            Toast.makeText(this, "Start Tracking", Toast.LENGTH_LONG).show();
+
+>>>>>>> ac27e0649c6d6ae2e9d9f87e7c3d5d51f83a2167
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
             writeServiceState(true);
             // To prevent starting the service if the required permission is NOT granted.
@@ -153,6 +159,7 @@ public class MainActivity extends AppCompatActivity
                 }
             } else {
                 //super.onActivityResult(Helper.R, resultCode, data);
+
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
                     startForegroundService(new Intent(this, FloatingService.class));
                 } else {
@@ -161,7 +168,9 @@ public class MainActivity extends AppCompatActivity
 
             }
 
+
 //        }
+
 
 //        }else {
 //            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
@@ -176,7 +185,10 @@ public class MainActivity extends AppCompatActivity
 //            writeServiceState(false);
 //            stopService(new Intent(MainActivity.this, FloatingService.class));
 //        }
+<<<<<<< HEAD
 
+=======
+>>>>>>> ac27e0649c6d6ae2e9d9f87e7c3d5d51f83a2167
     }
 
     @Override
