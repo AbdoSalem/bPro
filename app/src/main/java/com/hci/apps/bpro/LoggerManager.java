@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,15 +107,20 @@ public class LoggerManager {
     public Map<String,MapItemModel> queryMonthBeforeAsList(Context ctxt) {
         SharedPreferences sharedPref = ctxt.getSharedPreferences(
                 ctxt.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        String date = sharedPref.getString(MainActivity.FIRST_INSTALL_DATE_KEY, null);
+        Long date = sharedPref.getLong(MainActivity.FIRST_INSTALL_DATE_KEY, -1);
         Map<String,MapItemModel> returnList = new HashMap<>();
-        if (date == null) {
+        if (date == -1) {
             return returnList;
         }
         try {
-            Date firstInstall = Helper.sdf.parse(date);
+            Date firstInstall = new Date(date);
             Date now = new Date();
-            long diff= now.getTime()- firstInstall.getTime();
+            Calendar fcal = Calendar.getInstance();
+            fcal.setTime(firstInstall);
+            GregorianCalendar nowcal = new GregorianCalendar();
+            GregorianCalendar finstcal = new GregorianCalendar(fcal.get(Calendar.YEAR),firstInstall.getMonth(),fcal.get(Calendar.DAY_OF_MONTH),firstInstall.getHours(),firstInstall.getMinutes(),firstInstall.getSeconds());
+            long diff= nowcal.getTimeInMillis() - date;
+            Log.d(TAG,"difference between "+ Helper.sdf.format(nowcal.getTime())+" and "+ Helper.sdf.format(finstcal.getTime())+" is "+diff);
             long startlLong = firstInstall.getTime()-diff;
             Calendar Mnthb4Install = Calendar.getInstance();
             Mnthb4Install.setTimeInMillis(startlLong);
@@ -133,10 +139,10 @@ public class LoggerManager {
                 for (int i = 0; i < 5; i++) {
                     ListItemModel noUseItem = list.get(i);
                     UsageStats useStats = usedata.get(noUseItem.getPackageName());
-                    returnList.put(noUseItem.getPackageName(), new MapItemModel(noUseItem.getPackageName(), noUseItem.getStats(), useStats));
+                    returnList.put(noUseItem.getPackageName(), new MapItemModel(noUseItem.getPackageName(), noUseItem.getStats(), useStats,new Date(startlLong),firstInstall,now));
                 }
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return returnList;

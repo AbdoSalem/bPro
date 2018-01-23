@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class Helper {
-    public static String  DATE_FORMAT_NOW = "yyyy-MM-dd";
+    public static String  DATE_FORMAT_NOW = "yyyy-MM-dd hh:mm:ss z";
     public static SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
     public static final int DRAW_OVER_OTHER_APP_PERMISSION = 123;
 

@@ -89,25 +89,25 @@ public class MainActivity extends AppCompatActivity
         sharedPref =  getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        String date = sharedPref.getString(FIRST_INSTALL_DATE_KEY,null);
+        long date = sharedPref.getLong(FIRST_INSTALL_DATE_KEY,-1);
         String version = sharedPref.getString(VERSION_KEY,null);
         //version control
-        if(version != null && !version.equals(VERSION_CONTROL_KEY)){
+        if(version != null && !version.equals(VERSION_NO_CONTROL_KEY)){
             //a new version has been installed
             SharedPreferences.Editor editor= sharedPref.edit();
-            editor.putString(VERSION_KEY,VERSION_CONTROL_KEY);
-            editor.putString(VERSION_INSTALL_DATE_KEY,Helper.sdf.format(new Date()));
+            editor.putString(VERSION_KEY,VERSION_NO_CONTROL_KEY);
+            editor.putLong(VERSION_INSTALL_DATE_KEY,new Date().getTime());
             editor.commit();
         }else if (version == null ||version.isEmpty()){
             //first time install
             SharedPreferences.Editor editor= sharedPref.edit();
-            editor.putString(VERSION_KEY,VERSION_CONTROL_KEY);
+            editor.putString(VERSION_KEY,VERSION_NO_CONTROL_KEY);
             editor.commit();
         }
 
-        if(date == null){
+        if(date == -1){
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString(FIRST_INSTALL_DATE_KEY, Helper.sdf.format(new Date()));
+            editor.putLong(FIRST_INSTALL_DATE_KEY, new Date().getTime());
             Log.d(TAG,"Weriting first install date "+ Helper.sdf.format(new Date()));
             editor.commit();
         }
@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity
         }else{
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
         }
+        serviceButton.setVisibility(View.GONE);
+        onServiceButtonClicked();
 
     }
 
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), MyAlarmService.class);
             pendingIntent = PendingIntent.getService(getApplicationContext(), 125, intent, 0);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            writeServiceState(this,true);
+//            writeServiceState(this,true);
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     15*60*1000, 15*60*1000, pendingIntent);
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
@@ -179,20 +181,20 @@ public class MainActivity extends AppCompatActivity
 
             }
 
-        }else {
-            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
-            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
-                    new Intent(this,MyAlarmService.class),
-                    0) );
-            Log.d(TAG,"The intent to cancel is "+ pendingIntent);
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-            serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
-            pendingIntent =null;
-            writeServiceState(this,false);
-            stopService(new Intent(MainActivity.this, FloatingService.class));
-//        }
-
+//        }else {
+//            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
+//            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
+//                    new Intent(this,MyAlarmService.class),
+//                    0) );
+//            Log.d(TAG,"The intent to cancel is "+ pendingIntent);
+//            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//            alarmManager.cancel(pendingIntent);
+//            serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
+//            pendingIntent =null;
+//            writeServiceState(this,false);
+//            stopService(new Intent(MainActivity.this, FloatingService.class));
+////        }
+//
         }
 
     }

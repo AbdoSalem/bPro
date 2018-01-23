@@ -168,18 +168,18 @@ public class ReportActivity extends AppCompatActivity {
                 DatabaseReference appRoot =  mobileRoot.child(String.valueOf(appName));
                 DatabaseReference afterRef = appRoot.child("After");
                 DatabaseReference startRef =  afterRef.child("Start");
-                startRef.setValue(Helper.sdf.format(new Date(item.getValue().getNewStats().getFirstTimeStamp())));
+                startRef.setValue(Helper.sdf.format(item.getValue().getMiddleDate()));
                 DatabaseReference endRef =  afterRef.child("End");
-                endRef.setValue(Helper.sdf.format(new Date(item.getValue().getNewStats().getLastTimeStamp())));
+                endRef.setValue(Helper.sdf.format(item.getValue().getEndDate()));
                 DatabaseReference timeRef =  afterRef.child("time");
                 timeRef.setValue(Helper.getTimeSpent(item.getValue().getNewStats().getTotalTimeInForeground()));
 
                 DatabaseReference beforeRef = appRoot.child("Before");
                 beforeRef.setValue(Helper.getTimeSpent(item.getValue().getOldStats().getTotalTimeInForeground()));
                 startRef =  beforeRef.child("Start");
-                startRef.setValue(Helper.sdf.format(new Date(item.getValue().getOldStats().getFirstTimeStamp())));
+                startRef.setValue(Helper.sdf.format(item.getValue().getStartDate()));
                 endRef =  beforeRef.child("End");
-                endRef.setValue(Helper.sdf.format(new Date(item.getValue().getNewStats().getFirstTimeStamp())));
+                endRef.setValue(Helper.sdf.format(item.getValue().getMiddleDate()));
                 timeRef =  beforeRef.child("time");
                 timeRef.setValue(Helper.getTimeSpent(item.getValue().getOldStats().getTotalTimeInForeground() - item.getValue().getNewStats().getTotalTimeInForeground()));
             } catch (PackageManager.NameNotFoundException e) {
