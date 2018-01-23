@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.hci.apps.bpro.activities.MainActivity.CHEAT_POINTS_KEY;
+import static com.hci.apps.bpro.activities.MainActivity.VERSION_KEY;
 
 public class ReportActivity extends AppCompatActivity {
     private static final String ID_KEY = "ID_KEY";
@@ -142,14 +144,17 @@ public class ReportActivity extends AppCompatActivity {
         float barWidth = 0.15f; // x4 DataSet
         // specify the width each bar should have
         mChart.getBarData().setBarWidth(barWidth);
+        try {
+            // restrict the x-axis range
+            mChart.getXAxis().setAxisMinimum(0);
 
-        // restrict the x-axis range
-        mChart.getXAxis().setAxisMinimum(0);
-
-        // barData.getGroupWith(...) is a helper that calculates the width each group needs based on the provided parameters
-        mChart.getXAxis().setAxisMaximum(0 + mChart.getBarData().getGroupWidth(groupSpace, barSpace) * 2);
-        mChart.groupBars(0, groupSpace, barSpace);
-        mChart.invalidate();
+            // barData.getGroupWith(...) is a helper that calculates the width each group needs based on the provided parameters
+            mChart.getXAxis().setAxisMaximum(0 + mChart.getBarData().getGroupWidth(groupSpace, barSpace) * 2);
+            mChart.groupBars(0, groupSpace, barSpace);
+            mChart.invalidate();
+        }catch(Exception ex){
+            Toast.makeText(this,"No data to display yet",Toast.LENGTH_LONG).show();
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //store to database
@@ -183,7 +188,7 @@ public class ReportActivity extends AppCompatActivity {
 
         }
 
-        
+
     }
     private String getID(){
         String ID;
@@ -203,7 +208,15 @@ public class ReportActivity extends AppCompatActivity {
             database = FirebaseDatabase.getInstance();
         if(myRef == null)
             myRef= database.getReference();
-        return myRef.child(getID());
+        String version = sharedPref.getString(VERSION_KEY,null);
+        DatabaseReference ret = myRef.child(getID());
+        if(version != null ){
+            if(version.equals(MainActivity.VERSION_CONTROL_KEY))
+                ret= ret.child("version_in_control");
+            else
+                ret= ret.child("version_no_control");
+        }
+        return ret;
     }
 
     @Override

@@ -46,24 +46,23 @@ public class FloatingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+    try {
         setTheme(R.style.AppTheme);
         LayoutInflater inflater = LayoutInflater.from(this);
 
         mOverlayView = inflater.inflate(R.layout.floating_widget, null);
         service = this;
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
-            startForeground(1,new Notification());
-        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-             params= new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
+            startForeground(1, new Notification());
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
 
-        }
-        else {
+        } else {
             params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -93,6 +92,7 @@ public class FloatingService extends Service {
             private float initialTouchX;
             private float initialTouchY;
             private boolean ismoved;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -101,7 +101,7 @@ public class FloatingService extends Service {
                         //remember the initial position.
                         initialX = params.x;
                         initialY = params.y;
-                        ismoved=false;
+                        ismoved = false;
 
                         //get the touch location
                         initialTouchX = event.getRawX();
@@ -110,7 +110,7 @@ public class FloatingService extends Service {
 
                         return true;
                     case MotionEvent.ACTION_UP:
-                        if(!ismoved)
+                        if (!ismoved)
                             onWidgetClicked();
 
 
@@ -128,8 +128,8 @@ public class FloatingService extends Service {
 
                         //Update the layout with new X & Y coordinates
                         mWindowManager.updateViewLayout(mOverlayView, params);
-                        if(Xdiff>10 || Ydiff >10)
-                             ismoved = true;
+                        if (Xdiff > 10 || Ydiff > 10)
+                            ismoved = true;
 
                         return true;
                 }
@@ -140,10 +140,15 @@ public class FloatingService extends Service {
 
             @Override
             public void onClick(View view) {
-                Log.d(TAG,"on click");
+                Log.d(TAG, "on click");
                 onWidgetClicked();
             }
         });
+        MainActivity.writeServiceState(this, true);
+    }catch(Exception ex){
+
+    }
+
     }
 
     private void onWidgetClicked() {
@@ -167,14 +172,15 @@ public class FloatingService extends Service {
         service = null;
         if (mOverlayView != null)
             mWindowManager.removeView(mOverlayView);
+        MainActivity.writeServiceState(this,false);
     }
 
     public void setState(List<ListItemModel> list){
-        if(!list.isEmpty()){
+        if(counterFab!= null && !list.isEmpty()){
             //counterFab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(255,0,0)));
             counterFab.setCount(list.size());
             counterFab.setImageDrawable(getDrawable(R.drawable.face));
-        }else{
+        }else if (counterFab!= null){
             //counterFab.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(0,255,0)));
             counterFab.setImageDrawable(getDrawable(R.drawable.smiley_sourire));
             counterFab.setCount(0);

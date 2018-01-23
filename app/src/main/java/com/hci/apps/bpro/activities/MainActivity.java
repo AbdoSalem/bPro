@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity
     private static final String SERVICE_STARTED_KEY = "SERVICE_STARTED_KEY";
     public static final String CHEAT_POINTS_KEY = "CHEAT_POINTS_KEY";
     public static final String FIRST_INSTALL_DATE_KEY = "FIRST_INSTALL_DATE_KEY";
+    public static final String VERSION_INSTALL_DATE_KEY = "VERSION_INSTALL_DATE_KEY";
+    public static final String VERSION_KEY = "VERSION_KEY";
+    public static final String VERSION_CONTROL_KEY = "VERSION_CONTROL_KEY";
+    public static final String VERSION_NO_CONTROL_KEY = "VERSION_NO_CONTROL_KEY";
+
     public static final String SHOW_ONLY_PASS_THRESHOLD = "SHOW_ONLY_PASS_THRESHOLD";
 
     public static final String CHEAT_POINTS_DATE_KEY = "CHEAT_POINTS_DATE_KEY";
@@ -83,11 +88,27 @@ public class MainActivity extends AppCompatActivity
 
         sharedPref =  getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         String date = sharedPref.getString(FIRST_INSTALL_DATE_KEY,null);
+        String version = sharedPref.getString(VERSION_KEY,null);
+        //version control
+        if(version != null && !version.equals(VERSION_NO_CONTROL_KEY)){
+            //a new version has been installed
+            SharedPreferences.Editor editor= sharedPref.edit();
+            editor.putString(VERSION_KEY,VERSION_NO_CONTROL_KEY);
+            editor.putString(VERSION_INSTALL_DATE_KEY,Helper.sdf.format(new Date()));
+            editor.commit();
+        }else if (version == null ||version.isEmpty()){
+            //first time install
+            SharedPreferences.Editor editor= sharedPref.edit();
+            editor.putString(VERSION_KEY,VERSION_NO_CONTROL_KEY);
+            editor.commit();
+        }
 
         if(date == null){
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString(FIRST_INSTALL_DATE_KEY, Helper.sdf.format(new Date()));
+            Log.d(TAG,"Weriting first install date "+ Helper.sdf.format(new Date()));
             editor.commit();
         }
 
@@ -104,15 +125,14 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
 
         }
-        onServiceButtonClicked();
-        serviceButton.setVisibility(View.GONE);
-//        serviceButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
 
+        serviceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onServiceButtonClicked();
+            }
+        });
+        serviceButton.setVisibility(View.GONE);
         Helper.askForSystemOverlayPermission(this);
 
 
@@ -122,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         }else{
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
         }
-
+        onServiceButtonClicked();
     }
 
     @Override
@@ -132,16 +152,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onServiceButtonClicked() {
-//        boolean alarmUp = sharedPref.getBoolean(SERVICE_STARTED_KEY,false);
-//        if(!alarmUp) {
+        boolean alarmUp = sharedPref.getBoolean(SERVICE_STARTED_KEY,false);
+        if(!alarmUp) {
             Intent intent = new Intent(getApplicationContext(), MyAlarmService.class);
             pendingIntent = PendingIntent.getService(getApplicationContext(), 125, intent, 0);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    15 * 60 * 1000, 15 * 60 * 1000, pendingIntent);
+                    15*60*1000, 15*60*1000, pendingIntent);
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
-            writeServiceState(true);
             // To prevent starting the service if the required permission is NOT granted.
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
@@ -150,34 +169,15 @@ public class MainActivity extends AppCompatActivity
                     Helper.askForSystemOverlayPermission(this);
                     finish();
                 }
-            } else {
+            }else {
                 //super.onActivityResult(Helper.R, resultCode, data);
-
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
                     startForegroundService(new Intent(this, FloatingService.class));
                 } else {
                     startService(new Intent(this, FloatingService.class));
                 }
-
             }
-
-
-//        }
-
-
-//        }else {
-//            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
-//            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
-//                    new Intent(this,MyAlarmService.class),
-//                    0) );
-//            Log.d(TAG,"The intent to cancel is "+ pendingIntent);
-//            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//            alarmManager.cancel(pendingIntent);
-//            serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
-//            pendingIntent =null;
-//            writeServiceState(false);
-//            stopService(new Intent(MainActivity.this, FloatingService.class));
-//        }
+        }
     }
 
     @Override
@@ -244,7 +244,9 @@ public class MainActivity extends AppCompatActivity
         int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.getPackageName());
         return mode == AppOpsManager.MODE_ALLOWED;
     }
-    private void writeServiceState(boolean isActive){
+    public static void writeServiceState(Context context,boolean isActive){
+        SharedPreferences sharedPref =  context.getSharedPreferences(
+                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(SERVICE_STARTED_KEY, isActive);
         editor.commit();

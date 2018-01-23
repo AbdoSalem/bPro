@@ -106,22 +106,37 @@ public class LoggerManager {
     public Map<String,MapItemModel> queryMonthBeforeAsList(Context ctxt) {
         SharedPreferences sharedPref = ctxt.getSharedPreferences(
                 ctxt.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        String date = sharedPref.getString(MainActivity.FIRST_INSTALL_DATE_KEY, null);
+        String versionDate = sharedPref.getString(MainActivity.VERSION_INSTALL_DATE_KEY, null);
+        String  date = sharedPref.getString(MainActivity.FIRST_INSTALL_DATE_KEY, null);
+
         Map<String,MapItemModel> returnList = new HashMap<>();
         if (date == null) {
             return returnList;
         }
         try {
             Date firstInstall = Helper.sdf.parse(date);
-            Date now = new Date();
-            long diff= now.getTime()- firstInstall.getTime();
+            Date versionInstall = null;
+            if(versionDate!= null)
+                Helper.sdf.parse(versionDate);
+            Date now = Helper.sdf.parse(Helper.sdf.format(new Date()));
+            long diff = 0;
+
+            if(versionInstall == null)
+                diff= now.getTime()- firstInstall.getTime();
+            else
+                diff= now.getTime()- versionInstall.getTime();
+
             long startlLong = firstInstall.getTime()-diff;
             Calendar Mnthb4Install = Calendar.getInstance();
             Mnthb4Install.setTimeInMillis(startlLong);
 
 
             Map<String, UsageStats> noUsedata = queryForPeriod(ctxt,startlLong,now.getTime());
-            Map<String, UsageStats> usedata = queryForPeriod(ctxt,firstInstall.getTime(),now.getTime());
+            Map<String, UsageStats> usedata =null;
+            if(versionInstall == null)
+                usedata = queryForPeriod(ctxt,firstInstall.getTime(),now.getTime());
+            else
+                usedata = queryForPeriod(ctxt,versionInstall.getTime(),now.getTime());
 
             List<ListItemModel> list = new ArrayList<>();
             for (Map.Entry<String, UsageStats> item : noUsedata.entrySet()) {
@@ -129,10 +144,12 @@ public class LoggerManager {
             }
 
             Collections.sort(list);
-            for (int i = 0; i < 5; i++) {
-                ListItemModel noUseItem= list.get(i);
-                UsageStats useStats = usedata.get(noUseItem.getPackageName());
-                returnList.put(noUseItem.getPackageName(),new MapItemModel(noUseItem.getPackageName(),noUseItem.getStats(),useStats));
+            if(list.size()>0) {
+                for (int i = 0; i < 5; i++) {
+                    ListItemModel noUseItem = list.get(i);
+                    UsageStats useStats = usedata.get(noUseItem.getPackageName());
+                    returnList.put(noUseItem.getPackageName(), new MapItemModel(noUseItem.getPackageName(), noUseItem.getStats(), useStats));
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
