@@ -92,16 +92,16 @@ public class MainActivity extends AppCompatActivity
         String date = sharedPref.getString(FIRST_INSTALL_DATE_KEY,null);
         String version = sharedPref.getString(VERSION_KEY,null);
         //version control
-        if(version != null && !version.equals(VERSION_NO_CONTROL_KEY)){
+        if(version != null && !version.equals(VERSION_CONTROL_KEY)){
             //a new version has been installed
             SharedPreferences.Editor editor= sharedPref.edit();
-            editor.putString(VERSION_KEY,VERSION_NO_CONTROL_KEY);
+            editor.putString(VERSION_KEY,VERSION_CONTROL_KEY);
             editor.putString(VERSION_INSTALL_DATE_KEY,Helper.sdf.format(new Date()));
             editor.commit();
         }else if (version == null ||version.isEmpty()){
             //first time install
             SharedPreferences.Editor editor= sharedPref.edit();
-            editor.putString(VERSION_KEY,VERSION_NO_CONTROL_KEY);
+            editor.putString(VERSION_KEY,VERSION_CONTROL_KEY);
             editor.commit();
         }
 
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), MyAlarmService.class);
             pendingIntent = PendingIntent.getService(getApplicationContext(), 125, intent, 0);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
+            writeServiceState(this,true);
             alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     15*60*1000, 15*60*1000, pendingIntent);
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity
             alarmManager.cancel(pendingIntent);
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
             pendingIntent =null;
-            //writeServiceState(false);
+            writeServiceState(this,false);
             stopService(new Intent(MainActivity.this, FloatingService.class));
 //        }
 
@@ -261,7 +261,9 @@ public class MainActivity extends AppCompatActivity
         int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.getPackageName());
         return mode == AppOpsManager.MODE_ALLOWED;
     }
-    private void writeServiceState(boolean isActive){
+    public static void writeServiceState(Context context,boolean isActive){
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(SERVICE_STARTED_KEY, isActive);
         editor.commit();
