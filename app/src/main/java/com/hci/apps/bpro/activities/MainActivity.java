@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                 onServiceButtonClicked();
             }
         });
-        serviceButton.setVisibility(View.GONE);
+
         Helper.askForSystemOverlayPermission(this);
 
 
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         }else{
             serviceButton.setImageDrawable(getDrawable(R.drawable.ic_stop_white_24dp));
         }
-        onServiceButtonClicked();
+
     }
 
     @Override
@@ -176,8 +176,25 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     startService(new Intent(this, FloatingService.class));
                 }
+
             }
+
+        }else {
+            Toast.makeText(this, "Stop Tracking", Toast.LENGTH_LONG).show();
+            pendingIntent = (PendingIntent.getBroadcast(getApplicationContext(), 125,
+                    new Intent(this,MyAlarmService.class),
+                    0) );
+            Log.d(TAG,"The intent to cancel is "+ pendingIntent);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.cancel(pendingIntent);
+            serviceButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_white_24dp));
+            pendingIntent =null;
+            //writeServiceState(false);
+            stopService(new Intent(MainActivity.this, FloatingService.class));
+//        }
+
         }
+
     }
 
     @Override
@@ -244,9 +261,7 @@ public class MainActivity extends AppCompatActivity
         int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.getPackageName());
         return mode == AppOpsManager.MODE_ALLOWED;
     }
-    public static void writeServiceState(Context context,boolean isActive){
-        SharedPreferences sharedPref =  context.getSharedPreferences(
-                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);;
+    private void writeServiceState(boolean isActive){
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(SERVICE_STARTED_KEY, isActive);
         editor.commit();
